@@ -1,0 +1,18 @@
+#!/bin/bash
+
+IFS=. read -r start_esec start_nsec <<< "$EPOCHREALTIME"
+
+tr "\n" "\2" | while IFS= read -r -n1 char; do
+	IFS=. read -r esec nsec <<< "$EPOCHREALTIME"
+	elapsed=$(( (10#$esec) - (10#$start_esec) ))
+	milliseconds=$(( 10#${nsec} - 10#${start_nsec} ))
+	milliseconds=$(( milliseconds>0 ? milliseconds : milliseconds*-1 ))
+	minutes=$((elapsed / 60))
+    seconds=$((elapsed % 60))
+
+	if [[ "$char" == $'\2' ]]; then
+		printf '\n[% 3.0f:%02.0f.%06.0fm] ' $minutes $seconds $milliseconds
+    else
+        printf "%s" "$char"
+    fi
+done

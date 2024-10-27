@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Time::HiRes qw(gettimeofday);
+
+my ($start_sec, $start_usec) = gettimeofday();
+
+while (read(STDIN, my $char, 1)) {
+    my ($current_sec, $current_usec) = gettimeofday();
+    my $elapsed = ($current_sec - $start_sec) + ($current_usec - $start_usec) / 1_000_000;
+
+    my $minutes = int($elapsed / 60);
+    my $seconds = $elapsed - ($minutes * 60);
+
+    if ($char eq "\n") {
+        printf "\n[% 3d:%08.5fm] ", $minutes, $seconds;
+    } else {
+        print $char;
+    }
+    select()->flush();
+}
+

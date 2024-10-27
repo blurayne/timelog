@@ -1,0 +1,13 @@
+#!/usr/bin/env -S awk -f
+
+function get_uptime(   a, line) {
+		    if((getline line < "/proc/uptime") > 0)
+		        split(line,a," ")
+		    close("/proc/uptime")
+		    return a[1]
+		}
+		BEGIN { basetime=get_uptime() }
+		{
+	        t=get_uptime()-basetime; m=int( t / 60 ); s=t%60;
+	        printf "[% 3d:%05.3fm] %s\n", m, s, $0
+		}

@@ -1,0 +1,29 @@
+#!/usr/bin/env lua 
+
+local socket = require("socket")
+
+local function gettimeofday()
+    local sec, usec = socket.gettime(), 0
+    usec = (sec - math.floor(sec)) * 1e6
+    return math.floor(sec), usec
+end
+
+local start_sec, start_usec = gettimeofday()
+
+while true do
+    local char = io.read(1)
+    if not char then break end
+
+    local current_sec, current_usec = gettimeofday()
+    local elapsed = (current_sec - start_sec) + (current_usec - start_usec) / 1e6
+
+    local minutes = math.floor(elapsed / 60)
+    local seconds = elapsed - (minutes * 60)
+
+    if char == "\n" then
+        io.write(string.format("\n[%3d:%08.5fm] ", minutes, seconds))
+    else
+        io.write(char)
+    end
+    io.flush()
+end

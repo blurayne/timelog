@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+import time
+import sys
+import argparse
+from datetime import datetime
+import pytz
+
+def main():
+    parser = argparse.ArgumentParser(description="A script to read and process input with timing and optional prefix.")
+    parser.add_argument('-p', '--prefix', type=str, default='', help='String to prefix before each linebreak.')
+    parser.add_argument('-s', '--show-start-end', action='store_true', help='Show start and end timestamps with timezone.')
+    args = parser.parse_args()
+
+    start = time.monotonic()
+    timezone = pytz.timezone('UTC')  # Change 'UTC' to your preferred timezone
+
+    if args.show_start_end:
+        start_time = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S %Z')
+        print(f"Start Time: {start_time}")
+
+    try:
+        while True:
+            c = sys.stdin.read(1)
+            if not c:
+                break
+
+            current = time.monotonic()
+            elapsed = current - start
+
+            minutes = int(elapsed // 60)
+            seconds = elapsed - (minutes * 60)
+
+            if c == '\n':
+                print(f"{args.prefix}\n[{minutes:3d}:{seconds:08.5f}m] ", end="")
+            else:
+                sys.stdout.write(c)
+                sys.stdout.flush()
+    except KeyboardInterrupt:
+        pass
+    
+    if args.show_start_end:
+        end_time = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S %Z')
+        print(f"\nEnd Time: {end_time}")
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+import time
+import sys
+
+def main():
+    start = time.monotonic()
+    
+    try:
+        while True:
+            c = sys.stdin.read(1)
+            if not c:
+                break
+
+            current = time.monotonic()
+            elapsed = current - start
+
+            minutes = int(elapsed // 60)
+            seconds = elapsed - (minutes * 60)
+
+            if c == '\n':
+                print(f"\n[{minutes:3d}:{seconds:08.5f}m] ", end="")
+            else:
+                sys.stdout.write(c)
+                sys.stdout.flush()
+    except KeyboardInterrupt:
+        pass
+
+if __name__ == "__main__":
+    main()
